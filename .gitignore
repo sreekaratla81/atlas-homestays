@@ -1,0 +1,10 @@
+# .gitignore
+node_modules/
+.env
+*.log
+*.bak
+.DS_Store
+.vscode/
+bin/
+obj/
+*.md~
