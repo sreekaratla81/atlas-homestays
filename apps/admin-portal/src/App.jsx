@@ -16,9 +16,9 @@ const App = () => {
   return (
     <BrowserRouter>
       <nav style={{ marginBottom: '1rem' }}>
-        <Link to="/">Properties</Link>{' '}
+        <Link to="/properties">Properties</Link>{' '}
         <Link to="/listings">Listings</Link>{' '}
-        <Link to="/bookings">Bookings</Link>{' '}
+        <Link to="/">Bookings</Link>{' '}
         {isAuthenticated ? (
           <>
             <span style={{ marginLeft: 10 }}>👋 {user?.name}</span>{' '}
