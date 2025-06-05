@@ -35,9 +35,9 @@ const App = () => {
 
       {isAuthorized ? (
         <Routes>
-          <Route path="/" element={<Properties />} />
+          <Route path="/" element={<Bookings />} />
           <Route path="/listings" element={<Listings />} />
-          <Route path="/bookings" element={<Bookings />} />
+          <Route path="/properties" element={<Properties />} />
         </Routes>
       ) : isAuthenticated ? (
         <p style={{ padding: '1rem', color: 'crimson' }}>
