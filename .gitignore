@@ -8,3 +8,12 @@ node_modules/
 bin/
 obj/
 *.md~
+.vs/
+*.vsidx
+*.suo
+*.user
+*.log
+bin/
+obj/
+node_modules/
+dist/
