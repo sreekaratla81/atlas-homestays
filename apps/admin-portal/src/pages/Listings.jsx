@@ -6,7 +6,8 @@ const Listings = () => {
   const [properties, setProperties] = useState([]);
   const [form, setForm] = useState({
     name: '', propertyId: '', floor: '', type: '', status: 'active',
-    wifiName: '', wifiPassword: '', maxGuests: ''
+    wifiName: '', wifiPassword: '', maxGuests: '',
+  checkInTime: '', checkOutTime: '' 
   });
   const [editId, setEditId] = useState(null);
 
@@ -26,7 +27,8 @@ const Listings = () => {
   const resetForm = () => {
     setForm({
       name: '', propertyId: '', floor: '', type: '', status: 'active',
-      wifiName: '', wifiPassword: '', maxGuests: ''
+      wifiName: '', wifiPassword: '', maxGuests: '',
+    checkInTime: '', checkOutTime: '' 
     });
     setEditId(null);
   };
@@ -68,7 +70,16 @@ const Listings = () => {
         <input placeholder='Name' value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
         <input placeholder='Floor' type='number' value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })} />
         <input placeholder='Type (1BHK)' value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
-        <input placeholder='Status' value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
+<input
+  placeholder='Check-in Time (e.g. 14:00)'
+  value={form.checkInTime || ''}
+  onChange={e => setForm({ ...form, checkInTime: e.target.value })}
+/>
+<input
+  placeholder='Check-out Time (e.g. 11:00)'
+  value={form.checkOutTime || ''}
+  onChange={e => setForm({ ...form, checkOutTime: e.target.value })}
+/>        <input placeholder='Status' value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
         <input placeholder='WiFi Name' value={form.wifiName} onChange={e => setForm({ ...form, wifiName: e.target.value })} />
         <input placeholder='WiFi Password' value={form.wifiPassword} onChange={e => setForm({ ...form, wifiPassword: e.target.value })} />
         <input placeholder='Max Guests' type='number' value={form.maxGuests} onChange={e => setForm({ ...form, maxGuests: e.target.value })} />
@@ -83,7 +94,9 @@ const Listings = () => {
             <th>Name</th>
             <th>Floor</th>
             <th>Type</th>
-            <th>Status</th>
+            <th>Check-in</th>
+<th>Check-out</th>
+<th>Status</th>
             <th>WiFi Name</th>
             <th>Guests</th>
             <th>Actions</th>
@@ -96,6 +109,8 @@ const Listings = () => {
               <td>{l.name}</td>
               <td>{l.floor}</td>
               <td>{l.type}</td>
+<td>{l.checkInTime}</td>
+<td>{l.checkOutTime}</td>
               <td>{l.status}</td>
               <td>{l.wifiName}</td>
               <td>{l.maxGuests}</td>
