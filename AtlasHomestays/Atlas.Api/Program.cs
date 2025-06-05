@@ -19,7 +19,7 @@ namespace Atlas.Api
                 {
                     policy.WithOrigins(
                         "http://localhost:5173",
-                        "https://atlas-homes-admin.vercel.app" // add your production domain here later
+                        "https://admin.atlashomestays.com" // add your production domain here later
                     )
                     .AllowAnyHeader()
                     .AllowAnyMethod();
