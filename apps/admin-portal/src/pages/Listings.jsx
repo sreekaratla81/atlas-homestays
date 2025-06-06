@@ -10,14 +10,24 @@ const Listings = () => {
     checkInTime: '', checkOutTime: ''
   });
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const fetchData = async () => {
-    const [listRes, propRes] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_BASE}/listings`),
-      axios.get(`${import.meta.env.VITE_API_BASE}/properties`)
-    ]);
-    setListings(listRes.data);
-    setProperties(propRes.data);
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const [listRes, propRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_BASE}/listings`),
+        axios.get(`${import.meta.env.VITE_API_BASE}/properties`)
+      ]);
+      setListings(listRes.data);
+      setProperties(propRes.data);
+    } catch (err) {
+      setErrorMsg('Failed to fetch data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -31,61 +41,116 @@ const Listings = () => {
       checkInTime: '', checkOutTime: ''
     });
     setEditId(null);
+    setErrorMsg('');
   };
 
-  const submit = () => {
-    const payload = {
-      ...form,
-      propertyId: parseInt(form.propertyId),
-      floor: parseInt(form.floor),
-      maxGuests: parseInt(form.maxGuests)
-    };
-    const url = `${import.meta.env.VITE_API_BASE}/listings`;
-    if (editId) {
-      axios.put(`${url}/${editId}`, payload).then(() => { resetForm(); fetchData(); });
-    } else {
-      axios.post(url, payload).then(() => { resetForm(); fetchData(); });
+  const submit = async () => {
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const payload = {
+        ...form,
+        propertyId: parseInt(form.propertyId),
+        floor: parseInt(form.floor),
+        maxGuests: parseInt(form.maxGuests)
+      };
+      const url = `${import.meta.env.VITE_API_BASE}/listings`;
+      if (editId) {
+        await axios.put(`${url}/${editId}`, payload);
+      } else {
+        await axios.post(url, payload);
+      }
+      resetForm();
+      fetchData();
+    } catch (err) {
+      setErrorMsg('Failed to save listing. Please check your input and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const edit = (l) => {
     setForm({ ...l, propertyId: l.propertyId.toString() });
     setEditId(l.id);
+    setErrorMsg('');
   };
 
-  const remove = (id) => {
+  const remove = async (id) => {
     if (confirm("Delete this listing?")) {
-      axios.delete(`${import.meta.env.VITE_API_BASE}/listings/${id}`).then(fetchData);
+      setLoading(true);
+      setErrorMsg('');
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_BASE}/listings/${id}`);
+        fetchData();
+      } catch (err) {
+        setErrorMsg('Failed to delete listing. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <div>
       <h2>{editId ? 'Edit Listing' : 'Add Listing'}</h2>
+      {errorMsg && <div style={{ color: 'red', marginBottom: 10 }}>{errorMsg}</div>}
+      {loading && <div style={{ color: '#1890ff', marginBottom: 10 }}>Loading...</div>}
       <div className="booking-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-        <select value={form.propertyId} onChange={e => setForm({ ...form, propertyId: e.target.value })}>
-          <option value=''>Select Property</option>
-          {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-        <input placeholder='Name' value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-        <input placeholder='Floor' type='number' value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })} />
-        <input placeholder='Type (1BHK)' value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
-        <input
-          placeholder='Check-in Time (e.g. 14:00)'
-          value={form.checkInTime || ''}
-          onChange={e => setForm({ ...form, checkInTime: e.target.value })}
-        />
-        <input
-          placeholder='Check-out Time (e.g. 11:00)'
-          value={form.checkOutTime || ''}
-          onChange={e => setForm({ ...form, checkOutTime: e.target.value })}
-        />
-        <input placeholder='Status' value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
-        <input placeholder='WiFi Name' value={form.wifiName} onChange={e => setForm({ ...form, wifiName: e.target.value })} />
-        <input placeholder='WiFi Password' value={form.wifiPassword} onChange={e => setForm({ ...form, wifiPassword: e.target.value })} />
-        <input placeholder='Max Guests' type='number' value={form.maxGuests} onChange={e => setForm({ ...form, maxGuests: e.target.value })} />
-        <button className="booking-btn" onClick={submit}>{editId ? 'Update' : 'Add Listing'}</button>
-        {editId && <button className="booking-btn booking-btn-cancel" onClick={resetForm}>Cancel</button>}
+        <form className="form-grid" onSubmit={e => { e.preventDefault(); submit(); }}>
+          <label>
+            Property
+            <select value={form.propertyId} onChange={e => setForm({ ...form, propertyId: e.target.value })}>
+              <option value=''>Select Property</option>
+              {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+          </label>
+          <label>
+            Name
+            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+          </label>
+          <label>
+            Floor
+            <input type='number' value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })} />
+          </label>
+          <label>
+            Type (1BHK)
+            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
+          </label>
+          <label>
+            Check-in Time (e.g. 14:00)
+            <input value={form.checkInTime || ''} onChange={e => setForm({ ...form, checkInTime: e.target.value })} />
+          </label>
+          <label>
+            Check-out Time (e.g. 11:00)
+            <input value={form.checkOutTime || ''} onChange={e => setForm({ ...form, checkOutTime: e.target.value })} />
+          </label>
+          <label>
+            Status
+            <input value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
+          </label>
+          <label>
+            WiFi Name
+            <input value={form.wifiName} onChange={e => setForm({ ...form, wifiName: e.target.value })} />
+          </label>
+          <label>
+            WiFi Password
+            <input value={form.wifiPassword} onChange={e => setForm({ ...form, wifiPassword: e.target.value })} />
+          </label>
+          <label>
+            Max Guests
+            <input type='number' value={form.maxGuests} onChange={e => setForm({ ...form, maxGuests: e.target.value })} />
+          </label>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+            <button className="booking-btn" type="submit" disabled={loading}>
+              {editId ? 'Update' : 'Add Listing'}
+            </button>
+            {editId && (
+              <button className="booking-btn booking-btn-cancel" type="button" onClick={resetForm} disabled={loading}>
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
@@ -117,8 +182,8 @@ const Listings = () => {
                 <td>{l.wifiName}</td>
                 <td>{l.maxGuests}</td>
                 <td>
-                  <button onClick={() => edit(l)}>Edit</button>
-                  <button onClick={() => remove(l.id)}>Delete</button>
+                  <button className="booking-btn" onClick={() => edit(l)} disabled={loading}>Edit</button>
+                  <button className="booking-btn booking-btn-cancel" onClick={() => remove(l.id)} disabled={loading}>Delete</button>
                 </td>
               </tr>
             ))}

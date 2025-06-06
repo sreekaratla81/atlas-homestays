@@ -131,7 +131,22 @@ const Bookings = () => {
   };
 
   const handleEdit = (bookingToEdit) => {
-    setBooking(bookingToEdit);
+    setBooking({
+      id: bookingToEdit.id,
+      listingId: bookingToEdit.listingId || '',
+      checkinDate: bookingToEdit.checkinDate || '',
+      checkoutDate: bookingToEdit.checkoutDate || '',
+      plannedCheckinTime: bookingToEdit.plannedCheckinTime || '',
+      actualCheckinTime: bookingToEdit.actualCheckinTime || '',
+      plannedCheckoutTime: bookingToEdit.plannedCheckoutTime || '',
+      actualCheckoutTime: bookingToEdit.actualCheckoutTime || '',
+      bookingSource: bookingToEdit.bookingSource || 'Walk-in',
+      paymentStatus: bookingToEdit.paymentStatus || 'unpaid',
+      amountReceived: bookingToEdit.amountReceived ?? 0,
+      notes: bookingToEdit.notes || '',
+      createdAt: bookingToEdit.createdAt || today,
+      paymentDate: bookingToEdit.paymentDate || today
+    });
     setSelectedGuestId(bookingToEdit.guestId.toString());
     const guestObj = guests.find(g => g.id === bookingToEdit.guestId) || { name: '', phone: '', email: '', idProofUrl: '' };
     setGuest(guestObj);
@@ -185,7 +200,7 @@ const Bookings = () => {
         )}
       </div>
       <div className="booking-card">
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+        <div className="form-grid">
           <select value={booking.listingId} onChange={e => setBooking({ ...booking, listingId: e.target.value })}>
             <option value=''>Select Listing</option>
             {listings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
@@ -289,7 +304,7 @@ const Bookings = () => {
         </div>
       )}
 
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
         <input
           placeholder="Filter by Listing"
           value={filters.listing}
@@ -371,8 +386,8 @@ const Bookings = () => {
                   <td>{b.paymentStatus}</td>
                   <td>{b.amountReceived}</td>
                   <td>{b.bookingSource}</td>
-                  <td>{b.createdAt ? new Date(b.createdAt).toLocaleString() : ''}</td>
-                  <td>{b.paymentDate ? new Date(b.paymentDate).toLocaleString() : ''}</td>
+                  <td>{b.createdAt ? new Date(b.createdAt).toLocaleDateString() : ''}</td>
+                  <td>{b.paymentDate ? new Date(b.paymentDate).toLocaleDateString() : ''}</td>
                   <td>
                     <button onClick={() => handleEdit(b)} disabled={loading}>Edit</button>
                   </td>
