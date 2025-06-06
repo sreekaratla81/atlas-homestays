@@ -102,7 +102,11 @@ const Bookings = () => {
           <option value=''>Select Listing</option>
           {listings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
         </select>
-        <select value={selectedGuestId} onChange={e => setSelectedGuestId(e.target.value)}>
+        <select
+          value={selectedGuestId}
+          onChange={e => setSelectedGuestId(e.target.value)}
+          disabled={!!booking.id} // Disable when editing
+        >
           <option value=''>New Guest</option>
           {guests.map(g => (
             <option key={g.id} value={g.id}>{g.name} ({g.phone})</option>
