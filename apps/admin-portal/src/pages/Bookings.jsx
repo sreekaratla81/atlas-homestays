@@ -387,7 +387,7 @@ const Bookings = () => {
               </>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '10px', marginTop: 16 }}>
+          <div style={{ display: 'flex', gap: '10px', marginTop: 16, justifyContent: 'flex-end', width: '100%' }}>
             <button className="booking-btn" type="submit" disabled={loading}>
               {loading ? 'Saving...' : booking.id ? 'Update Booking' : 'Create Booking'}
             </button>
