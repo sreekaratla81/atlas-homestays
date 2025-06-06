@@ -31,7 +31,7 @@ namespace Atlas.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Booking>> Create(Booking item)
+        public async Task<ActionResult<Booking>> Create([FromBody] Booking item)
         {
             _context.Bookings.Add(item);
             await _context.SaveChangesAsync();
@@ -39,7 +39,7 @@ namespace Atlas.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Booking item)
+        public async Task<IActionResult> Update(int id, [FromBody] Booking item)
         {
             if (id != item.Id) return BadRequest();
             _context.Entry(item).State = EntityState.Modified;
