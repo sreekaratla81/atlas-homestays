@@ -99,34 +99,41 @@ const Listings = () => {
         <form className="form-grid" onSubmit={e => { e.preventDefault(); submit(); }}>
           <label>
             Property
-            <select value={form.propertyId} onChange={e => setForm({ ...form, propertyId: e.target.value })}>
+            <select value={form.propertyId} onChange={e => setForm({ ...form, propertyId: e.target.value })} required>
               <option value=''>Select Property</option>
               {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </label>
           <label>
             Name
-            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
           </label>
           <label>
             Floor
-            <input type='number' value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })} />
+            <input type='number' value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })} required min={0} />
           </label>
           <label>
             Type (1BHK)
-            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
+            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} required />
           </label>
           <label>
             Check-in Time (e.g. 14:00)
-            <input value={form.checkInTime || ''} onChange={e => setForm({ ...form, checkInTime: e.target.value })} />
+            <input value={form.checkInTime || ''} onChange={e => setForm({ ...form, checkInTime: e.target.value })} required pattern="^([01]\d|2[0-3]):([0-5]\d)$" />
           </label>
           <label>
             Check-out Time (e.g. 11:00)
-            <input value={form.checkOutTime || ''} onChange={e => setForm({ ...form, checkOutTime: e.target.value })} />
+            <input value={form.checkOutTime || ''} onChange={e => setForm({ ...form, checkOutTime: e.target.value })} required pattern="^([01]\d|2[0-3]):([0-5]\d)$" />
           </label>
           <label>
             Status
-            <input value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
+            <select
+              value={form.status}
+              onChange={e => setForm({ ...form, status: e.target.value })}
+              required
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </label>
           <label>
             WiFi Name
@@ -138,9 +145,10 @@ const Listings = () => {
           </label>
           <label>
             Max Guests
-            <input type='number' value={form.maxGuests} onChange={e => setForm({ ...form, maxGuests: e.target.value })} />
+            <input type='number' value={form.maxGuests} onChange={e => setForm({ ...form, maxGuests: e.target.value })} required min={1} />
           </label>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+          {/* Move buttons to a new row below the fields for better alignment */}
+          <div style={{ display: 'flex', gap: '10px', marginTop: 16, justifyContent: 'flex-end', width: '100%' }}>
             <button className="booking-btn" type="submit" disabled={loading}>
               {editId ? 'Update' : 'Add Listing'}
             </button>

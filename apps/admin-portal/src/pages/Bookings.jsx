@@ -251,6 +251,8 @@ const Bookings = () => {
                     value={guest.phone}
                     onChange={e => setGuest({ ...guest, phone: e.target.value })}
                     disabled={!!selectedGuestId || !!booking.id}
+                    pattern="^[0-9+\-\s]{7,15}$"
+                    title="Enter a valid phone number"
                   />
                 </label>
                 <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
@@ -260,6 +262,8 @@ const Bookings = () => {
                     value={guest.email}
                     onChange={e => setGuest({ ...guest, email: e.target.value })}
                     disabled={!!selectedGuestId || !!booking.id}
+                    type="email"
+                    title="Enter a valid email address"
                   />
                 </label>
                 <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
@@ -323,15 +327,39 @@ const Bookings = () => {
             </label>
             <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               Booking Source
-              <input placeholder='Booking Source' value={booking.bookingSource} onChange={e => setBooking({ ...booking, bookingSource: e.target.value })} />
+              <select
+                value={booking.bookingSource}
+                onChange={e => setBooking({ ...booking, bookingSource: e.target.value })}
+                required
+              >
+                <option value="Walk-in">Walk-in</option>
+                <option value="Online">Online</option>
+                <option value="Agent">Agent</option>
+                {/* Add more options as needed */}
+              </select>
             </label>
             <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               Payment Status
-              <input placeholder='Payment Status' value={booking.paymentStatus} onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })} />
+              <select
+                value={booking.paymentStatus}
+                onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })}
+                required
+              >
+                <option value="unpaid">Unpaid</option>
+                <option value="paid">Paid</option>
+                <option value="partial">Partial</option>
+              </select>
             </label>
             <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               Amount Received
-              <input placeholder='Amount Received' value={booking.amountReceived} onChange={e => setBooking({ ...booking, amountReceived: e.target.value })} />
+              <input
+                type="number"
+                placeholder="Amount Received"
+                value={booking.amountReceived}
+                onChange={e => setBooking({ ...booking, amountReceived: e.target.value })}
+                min={0}
+                step="0.01"
+              />
             </label>
             <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               Notes
@@ -359,7 +387,7 @@ const Bookings = () => {
               </>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', marginTop: 16 }}>
             <button className="booking-btn" type="submit" disabled={loading}>
               {loading ? 'Saving...' : booking.id ? 'Update Booking' : 'Create Booking'}
             </button>

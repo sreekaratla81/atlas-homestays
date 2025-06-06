@@ -62,17 +62,66 @@ const Properties = () => {
       <h2>{editId ? 'Edit Property' : 'Add Property'}</h2>
       {errorMsg && <div style={{ color: 'red', marginBottom: 10 }}>{errorMsg}</div>}
       <div className="booking-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-        <div className="form-grid">
-          <input placeholder='Name' value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-          <input placeholder='Address' value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
-          <input placeholder='Type' value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
-          <input placeholder='Owner Name' value={form.ownerName} onChange={e => setForm({ ...form, ownerName: e.target.value })} />
-          <input placeholder='Contact Phone' value={form.contactPhone} onChange={e => setForm({ ...form, contactPhone: e.target.value })} />
-          <input placeholder='Commission %' type='number' value={form.commissionPercent} onChange={e => setForm({ ...form, commissionPercent: e.target.value })} />
-          <input placeholder='Status' value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
+        <form id="property-form" className="form-grid" onSubmit={e => { e.preventDefault(); submit(); }}>
+          <label>
+            Name
+            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+          </label>
+          <label>
+            Address
+            <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} required />
+          </label>
+          <label>
+            Type
+            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} required />
+          </label>
+          <label>
+            Owner Name
+            <input value={form.ownerName} onChange={e => setForm({ ...form, ownerName: e.target.value })} required />
+          </label>
+          <label>
+            Contact Phone
+            <input value={form.contactPhone} onChange={e => setForm({ ...form, contactPhone: e.target.value })} required pattern="^[0-9+\-\s]{7,15}$" />
+          </label>
+          <label>
+            Commission %
+            <input type='number' value={form.commissionPercent} onChange={e => setForm({ ...form, commissionPercent: e.target.value })} required min={0} max={100} />
+          </label>
+          <label>
+            Status
+            <select
+              value={form.status}
+              onChange={e => setForm({ ...form, status: e.target.value })}
+              required
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </label>
+        </form>
+        <div
+          style={{
+            display: 'flex',
+            gap: '10px',
+            marginTop: 16,
+            justifyContent: 'flex-end',
+            width: '100%'
+          }}
+        >
+          <button className="booking-btn" type="submit" form="property-form" disabled={loading}>
+            {editId ? 'Update Property' : 'Add Property'}
+          </button>
+          {editId && (
+            <button
+              className="booking-btn booking-btn-cancel"
+              type="button"
+              onClick={resetForm}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          )}
         </div>
-        <button className="booking-btn" onClick={submit} disabled={loading}>{editId ? 'Update Property' : 'Add Property'}</button>
-        {editId && <button className="booking-btn booking-btn-cancel" onClick={resetForm} disabled={loading}>Cancel</button>}
       </div>
 
       <div style={{ overflowX: 'auto' }}>
