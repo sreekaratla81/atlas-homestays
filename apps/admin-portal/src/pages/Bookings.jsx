@@ -4,6 +4,8 @@ import axios from 'axios';
 const Bookings = () => {
   const [listings, setListings] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [guests, setGuests] = useState([]);
+  const [selectedGuestId, setSelectedGuestId] = useState('');
   const [guest, setGuest] = useState({ name: '', phone: '', email: '', idProofUrl: '' });
   const [booking, setBooking] = useState({
     id: null,
@@ -15,10 +17,12 @@ const Bookings = () => {
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE}/listings`).then(res => setListings(res.data));
     axios.get(`${import.meta.env.VITE_API_BASE}/bookings`).then(res => setBookings(res.data));
+    axios.get(`${import.meta.env.VITE_API_BASE}/guests`).then(res => setGuests(res.data));
   }, []);
 
   const reset = () => {
     setGuest({ name: '', phone: '', email: '', idProofUrl: '' });
+    setSelectedGuestId('');
     setBooking({
       id: null,
       listingId: '', checkinDate: '', checkoutDate: '', plannedCheckinTime: '', actualCheckinTime: '',
@@ -29,10 +33,15 @@ const Bookings = () => {
 
   const submit = async () => {
     try {
-      const guestRes = await axios.post(`${import.meta.env.VITE_API_BASE}/guests`, guest);
+      let guestId = selectedGuestId;
+      if (!guestId) {
+        // Create new guest
+        const guestRes = await axios.post(`${import.meta.env.VITE_API_BASE}/guests`, guest);
+        guestId = guestRes.data.id;
+      }
       let payload = {
         ...booking,
-        guestId: guestRes.data.id,
+        guestId,
         listingId: parseInt(booking.listingId),
         amountReceived: parseFloat(booking.amountReceived)
       };
@@ -62,10 +71,20 @@ const Bookings = () => {
           <option value=''>Select Listing</option>
           {listings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
         </select>
-        <input placeholder='Guest Name' value={guest.name} onChange={e => setGuest({ ...guest, name: e.target.value })} />
-        <input placeholder='Phone' value={guest.phone} onChange={e => setGuest({ ...guest, phone: e.target.value })} />
-        <input placeholder='Email' value={guest.email} onChange={e => setGuest({ ...guest, email: e.target.value })} />
-        <input placeholder='ID Proof URL' value={guest.idProofUrl} onChange={e => setGuest({ ...guest, idProofUrl: e.target.value })} />
+        <select value={selectedGuestId} onChange={e => setSelectedGuestId(e.target.value)}>
+          <option value=''>New Guest</option>
+          {guests.map(g => (
+            <option key={g.id} value={g.id}>{g.name} ({g.phone})</option>
+          ))}
+        </select>
+        {!selectedGuestId && (
+          <>
+            <input placeholder='Guest Name' value={guest.name} onChange={e => setGuest({ ...guest, name: e.target.value })} />
+            <input placeholder='Phone' value={guest.phone} onChange={e => setGuest({ ...guest, phone: e.target.value })} />
+            <input placeholder='Email' value={guest.email} onChange={e => setGuest({ ...guest, email: e.target.value })} />
+            <input placeholder='ID Proof URL' value={guest.idProofUrl} onChange={e => setGuest({ ...guest, idProofUrl: e.target.value })} />
+          </>
+        )}
         <input type='date' value={booking.checkinDate} onChange={e => setBooking({ ...booking, checkinDate: e.target.value })} />
         <input type='date' value={booking.checkoutDate} onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })} />
         <input placeholder='Planned In Time' value={booking.plannedCheckinTime} onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })} />

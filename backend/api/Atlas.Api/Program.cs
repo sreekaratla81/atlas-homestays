@@ -1,8 +1,6 @@
 using Atlas.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
-using Atlas.Api.Data;
-
 namespace Atlas.Api
 {
     public class Program
@@ -44,13 +42,7 @@ namespace Atlas.Api
                 c.RoutePrefix = "swagger"; // ensures URL ends with /swagger
             });
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
+            app.UseDeveloperExceptionPage(); // Add this line for dev environment
             app.UseHttpsRedirection();
             app.UseCors();
             app.UseAuthorization();

@@ -1,13 +1,17 @@
-
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Atlas.Api.Models
 {
     public class Booking
     {
         public int Id { get; set; }
+
+        [Required]
         public int ListingId { get; set; }
+
+        [Required]
         public int GuestId { get; set; }
+
         public DateTime CheckinDate { get; set; }
         public DateTime CheckoutDate { get; set; }
         public TimeSpan? PlannedCheckinTime { get; set; }
