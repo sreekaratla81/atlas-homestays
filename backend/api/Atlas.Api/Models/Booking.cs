@@ -22,5 +22,8 @@ namespace Atlas.Api.Models
         public string PaymentStatus { get; set; }
         public decimal AmountReceived { get; set; }
         public string Notes { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? PaymentDate { get; set; }
     }
 }

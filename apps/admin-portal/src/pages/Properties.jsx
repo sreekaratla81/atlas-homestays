@@ -52,7 +52,7 @@ const Properties = () => {
   return (
     <div>
       <h2>{editId ? 'Edit Property' : 'Add Property'}</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+      <div className="booking-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
         <input placeholder='Name' value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
         <input placeholder='Address' value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} />
         <input placeholder='Type' value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} />
@@ -60,39 +60,41 @@ const Properties = () => {
         <input placeholder='Contact Phone' value={form.contactPhone} onChange={e => setForm({ ...form, contactPhone: e.target.value })} />
         <input placeholder='Commission %' type='number' value={form.commissionPercent} onChange={e => setForm({ ...form, commissionPercent: e.target.value })} />
         <input placeholder='Status' value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} />
-        <button onClick={submit}>{editId ? 'Update Property' : 'Add Property'}</button>
-        {editId && <button onClick={resetForm}>Cancel</button>}
+        <button className="booking-btn" onClick={submit}>{editId ? 'Update Property' : 'Add Property'}</button>
+        {editId && <button className="booking-btn booking-btn-cancel" onClick={resetForm}>Cancel</button>}
       </div>
 
-      <table border='1' cellPadding='8' style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Owner</th>
-            <th>Phone</th>
-            <th>Commission %</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {list.map(p => (
-            <tr key={p.id}>
-              <td>{p.name}</td>
-              <td>{p.type}</td>
-              <td>{p.ownerName}</td>
-              <td>{p.contactPhone}</td>
-              <td>{p.commissionPercent}</td>
-              <td>{p.status}</td>
-              <td>
-                <button onClick={() => edit(p)}>Edit</button>
-                <button onClick={() => remove(p.id)}>Delete</button>
-              </td>
+      <div style={{ overflowX: 'auto' }}>
+        <table className="booking-table" border='1' cellPadding='8' style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Owner</th>
+              <th>Phone</th>
+              <th>Commission %</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {list.map(p => (
+              <tr key={p.id}>
+                <td>{p.name}</td>
+                <td>{p.type}</td>
+                <td>{p.ownerName}</td>
+                <td>{p.contactPhone}</td>
+                <td>{p.commissionPercent}</td>
+                <td>{p.status}</td>
+                <td>
+                  <button onClick={() => edit(p)}>Edit</button>
+                  <button onClick={() => remove(p.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
