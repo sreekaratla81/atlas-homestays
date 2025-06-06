@@ -97,28 +97,28 @@ const Bookings = () => {
           value={booking.plannedCheckinTime}
           onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
         >
-          <option value="">Select Planned In Time</option>
+          <option value="">Planned In Time</option>
           {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <select
           value={booking.actualCheckinTime}
           onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
         >
-          <option value="">Select Actual In Time</option>
+          <option value="">Actual In Time</option>
           {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <select
           value={booking.plannedCheckoutTime}
           onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
         >
-          <option value="">Select Planned Out Time</option>
+          <option value="">Planned Out Time</option>
           {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <select
           value={booking.actualCheckoutTime}
           onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
         >
-          <option value="">Select Actual Out Time</option>
+          <option value="">Actual Out Time</option>
           {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <input placeholder='Booking Source' value={booking.bookingSource} onChange={e => setBooking({ ...booking, bookingSource: e.target.value })} />
