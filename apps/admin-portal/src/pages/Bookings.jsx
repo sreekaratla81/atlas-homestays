@@ -200,109 +200,182 @@ const Bookings = () => {
         )}
       </div>
       <div className="booking-card">
-        <div className="form-grid">
-          <select value={booking.listingId} onChange={e => setBooking({ ...booking, listingId: e.target.value })}>
-            <option value=''>Select Listing</option>
-            {listings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-          </select>
-          <select
-            value={selectedGuestId}
-            onChange={e => setSelectedGuestId(e.target.value)}
-            disabled={Boolean(booking.id)}
-          >
-            <option value=''>New Guest</option>
-            {guests.map(g => (
-              <option key={g.id} value={g.id}>{g.name} ({g.phone})</option>
-            ))}
-          </select>
-          {!selectedGuestId && (
-            <>
-              <input
-                placeholder='Guest Name'
-                value={guest.name}
-                onChange={e => setGuest({ ...guest, name: e.target.value })}
-                disabled={!!selectedGuestId || !!booking.id}
-              />
-              <input
-                placeholder='Phone'
-                value={guest.phone}
-                onChange={e => setGuest({ ...guest, phone: e.target.value })}
-                disabled={!!selectedGuestId || !!booking.id}
-              />
-              <input
-                placeholder='Email'
-                value={guest.email}
-                onChange={e => setGuest({ ...guest, email: e.target.value })}
-                disabled={!!selectedGuestId || !!booking.id}
-              />
-              <input
-                placeholder='ID Proof URL'
-                value={guest.idProofUrl}
-                onChange={e => setGuest({ ...guest, idProofUrl: e.target.value })}
-                disabled={!!selectedGuestId || !!booking.id}
-              />
-            </>
-          )}
-          <input type='date' value={booking.checkinDate} onChange={e => setBooking({ ...booking, checkinDate: e.target.value })} />
-          <input type='date' value={booking.checkoutDate} onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })} />
-          <select
-            value={booking.plannedCheckinTime}
-            onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
-          >
-            <option value="">Planned In Time</option>
-            {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <select
-            value={booking.actualCheckinTime}
-            onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
-          >
-            <option value="">Actual In Time</option>
-            {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <select
-            value={booking.plannedCheckoutTime}
-            onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
-          >
-            <option value="">Planned Out Time</option>
-            {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <select
-            value={booking.actualCheckoutTime}
-            onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
-          >
-            <option value="">Actual Out Time</option>
-            {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <input placeholder='Booking Source' value={booking.bookingSource} onChange={e => setBooking({ ...booking, bookingSource: e.target.value })} />
-          <input placeholder='Payment Status' value={booking.paymentStatus} onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })} />
-          <input placeholder='Amount Received' value={booking.amountReceived} onChange={e => setBooking({ ...booking, amountReceived: e.target.value })} />
-          <input placeholder='Notes' value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} />
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button className="booking-btn" onClick={submit} disabled={loading}>
-            {loading ? 'Saving...' : booking.id ? 'Update Booking' : 'Create Booking'}
-          </button>
-          {booking.id && <button className="booking-btn booking-btn-cancel" onClick={reset} disabled={loading}>Cancel</button>}
-        </div>
+        <form
+          className="form-grid"
+          onSubmit={e => {
+            e.preventDefault();
+            submit();
+          }}
+          autoComplete="off"
+        >
+          <div className="form-grid">
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Listing
+              <select
+                value={booking.listingId}
+                onChange={e => setBooking({ ...booking, listingId: e.target.value })}
+                required
+              >
+                <option value=''>Select Listing</option>
+                {listings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+              </select>
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Guest
+              <select
+                value={selectedGuestId}
+                onChange={e => setSelectedGuestId(e.target.value)}
+                disabled={Boolean(booking.id)}
+              >
+                <option value=''>New Guest</option>
+                {guests.map(g => (
+                  <option key={g.id} value={g.id}>{g.name} ({g.phone})</option>
+                ))}
+              </select>
+            </label>
+            {!selectedGuestId && (
+              <>
+                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  Guest Name
+                  <input
+                    placeholder='Guest Name'
+                    value={guest.name}
+                    onChange={e => setGuest({ ...guest, name: e.target.value })}
+                    disabled={!!selectedGuestId || !!booking.id}
+                  />
+                </label>
+                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  Phone
+                  <input
+                    placeholder='Phone'
+                    value={guest.phone}
+                    onChange={e => setGuest({ ...guest, phone: e.target.value })}
+                    disabled={!!selectedGuestId || !!booking.id}
+                  />
+                </label>
+                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  Email
+                  <input
+                    placeholder='Email'
+                    value={guest.email}
+                    onChange={e => setGuest({ ...guest, email: e.target.value })}
+                    disabled={!!selectedGuestId || !!booking.id}
+                  />
+                </label>
+                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  ID Proof URL
+                  <input
+                    placeholder='ID Proof URL'
+                    value={guest.idProofUrl}
+                    onChange={e => setGuest({ ...guest, idProofUrl: e.target.value })}
+                    disabled={!!selectedGuestId || !!booking.id}
+                  />
+                </label>
+              </>
+            )}
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Check-in Date
+              <input type='date' value={booking.checkinDate} onChange={e => setBooking({ ...booking, checkinDate: e.target.value })} />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Check-out Date
+              <input type='date' value={booking.checkoutDate} onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })} />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Planned In Time
+              <select
+                value={booking.plannedCheckinTime}
+                onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
+              >
+                <option value="">Planned In Time</option>
+                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Actual In Time
+              <select
+                value={booking.actualCheckinTime}
+                onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
+              >
+                <option value="">Actual In Time</option>
+                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Planned Out Time
+              <select
+                value={booking.plannedCheckoutTime}
+                onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
+              >
+                <option value="">Planned Out Time</option>
+                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Actual Out Time
+              <select
+                value={booking.actualCheckoutTime}
+                onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
+              >
+                <option value="">Actual Out Time</option>
+                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Booking Source
+              <input placeholder='Booking Source' value={booking.bookingSource} onChange={e => setBooking({ ...booking, bookingSource: e.target.value })} />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Payment Status
+              <input placeholder='Payment Status' value={booking.paymentStatus} onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })} />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Amount Received
+              <input placeholder='Amount Received' value={booking.amountReceived} onChange={e => setBooking({ ...booking, amountReceived: e.target.value })} />
+            </label>
+            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              Notes
+              <input placeholder='Notes' value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} />
+            </label>
+            {/* Created At and Payment Date labels already present */}
+            {!booking.id && (
+              <>
+                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  Created At
+                  <input
+                    type="date"
+                    value={booking.createdAt}
+                    onChange={e => setBooking({ ...booking, createdAt: e.target.value })}
+                  />
+                </label>
+                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  Payment Date
+                  <input
+                    type="date"
+                    value={booking.paymentDate}
+                    onChange={e => setBooking({ ...booking, paymentDate: e.target.value })}
+                  />
+                </label>
+              </>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button className="booking-btn" type="submit" disabled={loading}>
+              {loading ? 'Saving...' : booking.id ? 'Update Booking' : 'Create Booking'}
+            </button>
+            {booking.id && (
+              <button
+                className="booking-btn booking-btn-cancel"
+                type="button"
+                onClick={reset}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
       </div>
-      {!booking.id && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-          <input
-            type="date"
-            value={booking.createdAt}
-            onChange={e => setBooking({ ...booking, createdAt: e.target.value })}
-            placeholder="Created At"
-            style={{ marginRight: 8 }}
-          />
-          <input
-            type="date"
-            value={booking.paymentDate}
-            onChange={e => setBooking({ ...booking, paymentDate: e.target.value })}
-            placeholder="Payment Date"
-            style={{ marginRight: 8 }}
-          />
-        </div>
-      )}
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
         <input
@@ -389,7 +462,14 @@ const Bookings = () => {
                   <td>{b.createdAt ? new Date(b.createdAt).toLocaleDateString() : ''}</td>
                   <td>{b.paymentDate ? new Date(b.paymentDate).toLocaleDateString() : ''}</td>
                   <td>
-                    <button onClick={() => handleEdit(b)} disabled={loading}>Edit</button>
+                    <button
+                      className="booking-btn"
+                      onClick={() => handleEdit(b)}
+                      disabled={loading}
+                      type="button"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               );

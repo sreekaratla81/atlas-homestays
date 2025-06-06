@@ -63,8 +63,8 @@ button:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 24px;
   margin-bottom: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
 }
 
 .booking-table {
