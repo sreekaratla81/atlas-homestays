@@ -31,18 +31,18 @@ namespace Atlas.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Booking>> Create([FromBody] Booking item)
+        public async Task<ActionResult<Booking>> Create([FromBody] Booking booking)
         {
-            _context.Bookings.Add(item);
+            _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = item.Id }, item);
+            return CreatedAtAction(nameof(Get), new { id = booking.Id }, booking);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Booking item)
+        public async Task<IActionResult> Update(int id, [FromBody] Booking booking)
         {
-            if (id != item.Id) return BadRequest();
-            _context.Entry(item).State = EntityState.Modified;
+            if (id != booking.Id) return BadRequest();
+            _context.Entry(booking).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return NoContent();
         }
