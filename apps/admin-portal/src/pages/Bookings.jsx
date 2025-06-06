@@ -30,7 +30,7 @@ const Bookings = () => {
   const submit = async () => {
     try {
       const guestRes = await axios.post(`${import.meta.env.VITE_API_BASE}/guests`, guest);
-      const payload = {
+      let payload = {
         ...booking,
         guestId: guestRes.data.id,
         listingId: parseInt(booking.listingId),
