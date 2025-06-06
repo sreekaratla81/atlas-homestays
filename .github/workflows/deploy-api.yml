@@ -1,0 +1,35 @@
+name: Deploy Atlas.Api to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore ./backend/api/Atlas.Api/Atlas.Api.csproj
+
+    - name: Build
+      run: dotnet build ./backend/api/Atlas.Api/Atlas.Api.csproj --configuration Release --no-restore
+
+    - name: Publish
+      run: dotnet publish ./backend/api/Atlas.Api/Atlas.Api.csproj --configuration Release --output ./publish_output
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: atlas-homes-api
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+        package: ./publish_output
