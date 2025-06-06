@@ -87,10 +87,26 @@ const Bookings = () => {
         )}
         <input type='date' value={booking.checkinDate} onChange={e => setBooking({ ...booking, checkinDate: e.target.value })} />
         <input type='date' value={booking.checkoutDate} onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })} />
-        <input placeholder='Planned In Time' value={booking.plannedCheckinTime} onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })} />
-        <input placeholder='Actual In Time' value={booking.actualCheckinTime} onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })} />
-        <input placeholder='Planned Out Time' value={booking.plannedCheckoutTime} onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })} />
-        <input placeholder='Actual Out Time' value={booking.actualCheckoutTime} onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })} />
+        <input
+          type="time"
+          value={booking.plannedCheckinTime || "12:00"}
+          onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
+        />
+        <input
+          type="time"
+          value={booking.actualCheckinTime || "12:00"}
+          onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
+        />
+        <input
+          type="time"
+          value={booking.plannedCheckoutTime || "12:00"}
+          onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
+        />
+        <input
+          type="time"
+          value={booking.actualCheckoutTime || "12:00"}
+          onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
+        />
         <input placeholder='Booking Source' value={booking.bookingSource} onChange={e => setBooking({ ...booking, bookingSource: e.target.value })} />
         <input placeholder='Payment Status' value={booking.paymentStatus} onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })} />
         <input placeholder='Amount Received' value={booking.amountReceived} onChange={e => setBooking({ ...booking, amountReceived: e.target.value })} />
