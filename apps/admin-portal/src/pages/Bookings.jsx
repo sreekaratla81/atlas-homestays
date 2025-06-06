@@ -36,6 +36,11 @@ const Bookings = () => {
         listingId: parseInt(booking.listingId),
         amountReceived: parseFloat(booking.amountReceived)
       };
+      // Remove id if it's null or undefined (for create)
+      if (!booking.id) {
+        const { id, ...rest } = payload;
+        payload = rest;
+      }
       if (booking.id) {
         await axios.put(`${import.meta.env.VITE_API_BASE}/bookings/${booking.id}`, payload);
       } else {
