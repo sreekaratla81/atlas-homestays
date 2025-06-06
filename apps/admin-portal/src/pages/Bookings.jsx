@@ -14,6 +14,12 @@ const Bookings = () => {
     paymentStatus: 'unpaid', amountReceived: 0, notes: ''
   });
 
+  const timeOptions = [
+    "08:00", "09:00", "10:00", "11:00", "12:00",
+    "13:00", "14:00", "15:00", "16:00", "17:00",
+    "18:00", "19:00", "20:00", "21:00", "22:00"
+  ];
+
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE}/listings`).then(res => setListings(res.data));
     axios.get(`${import.meta.env.VITE_API_BASE}/bookings`).then(res => setBookings(res.data));
@@ -87,26 +93,34 @@ const Bookings = () => {
         )}
         <input type='date' value={booking.checkinDate} onChange={e => setBooking({ ...booking, checkinDate: e.target.value })} />
         <input type='date' value={booking.checkoutDate} onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })} />
-        <input
-          type="time"
-          value={booking.plannedCheckinTime || "12:00"}
+        <select
+          value={booking.plannedCheckinTime}
           onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
-        />
-        <input
-          type="time"
-          value={booking.actualCheckinTime || "12:00"}
+        >
+          <option value="">Select Planned In Time</option>
+          {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <select
+          value={booking.actualCheckinTime}
           onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
-        />
-        <input
-          type="time"
-          value={booking.plannedCheckoutTime || "12:00"}
+        >
+          <option value="">Select Actual In Time</option>
+          {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <select
+          value={booking.plannedCheckoutTime}
           onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
-        />
-        <input
-          type="time"
-          value={booking.actualCheckoutTime || "12:00"}
+        >
+          <option value="">Select Planned Out Time</option>
+          {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <select
+          value={booking.actualCheckoutTime}
           onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
-        />
+        >
+          <option value="">Select Actual Out Time</option>
+          {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
         <input placeholder='Booking Source' value={booking.bookingSource} onChange={e => setBooking({ ...booking, bookingSource: e.target.value })} />
         <input placeholder='Payment Status' value={booking.paymentStatus} onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })} />
         <input placeholder='Amount Received' value={booking.amountReceived} onChange={e => setBooking({ ...booking, amountReceived: e.target.value })} />
