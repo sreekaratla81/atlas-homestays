@@ -333,8 +333,11 @@ const Bookings = () => {
                 required
               >
                 <option value="Walk-in">Walk-in</option>
-                <option value="Online">Online</option>
+                <option value="airbnb">Online</option>
+                <option value="agoda">Online</option>
+                <option value="booking.com">Online</option>
                 <option value="Agent">Agent</option>
+                <option value="Others">Online</option>
                 {/* Add more options as needed */}
               </select>
             </label>
