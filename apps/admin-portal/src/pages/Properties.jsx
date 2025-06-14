@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import {
+  Box, Button, CircularProgress, FormControl, InputLabel, MenuItem,
+  Select, TextField, Typography, Table, TableHead, TableRow, TableCell,
+  TableBody, Paper, Alert
+} from '@mui/material';
 import axios from 'axios';
 
 const Properties = () => {
@@ -10,12 +15,17 @@ const Properties = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setLoading(true);
-    axios.get(`${import.meta.env.VITE_API_BASE}/properties`)
-      .then(res => setList(res.data))
-      .catch(() => setErrorMsg('Failed to fetch properties.'))
-      .finally(() => setLoading(false));
+    setErrorMsg('');
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE}/properties`);
+      setList(response.data);
+    } catch (err) {
+      setErrorMsg('Failed to fetch properties. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -27,135 +37,312 @@ const Properties = () => {
       name: '', address: '', type: '', ownerName: '', contactPhone: '', commissionPercent: '', status: 'active'
     });
     setEditId(null);
+    setErrorMsg('');
   };
 
-  const submit = () => {
+  const submit = async () => {
     setErrorMsg('');
     setLoading(true);
-    const req = editId
-      ? axios.put(`${import.meta.env.VITE_API_BASE}/properties/${editId}`, form)
-      : axios.post(`${import.meta.env.VITE_API_BASE}/properties`, form);
-    req.then(() => {
+    try {
+      const payload = {
+        ...form,
+        commissionPercent: parseFloat(form.commissionPercent)
+      };
+      const url = `${import.meta.env.VITE_API_BASE}/properties`;
+      if (editId) {
+        await axios.put(`${url}/${editId}`, payload);
+      } else {
+        await axios.post(url, payload);
+      }
       resetForm();
       fetchData();
-    }).catch(() => setErrorMsg('Failed to save property.'))
-      .finally(() => setLoading(false));
+    } catch (err) {
+      setErrorMsg('Failed to save property. Please check your input and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const edit = (prop) => {
-    setForm({ ...prop });
+    setForm({ ...prop, commissionPercent: prop.commissionPercent.toString() });
     setEditId(prop.id);
+    setErrorMsg('');
   };
 
-  const remove = (id) => {
+  const remove = async (id) => {
     if (confirm("Are you sure you want to delete this property?")) {
       setLoading(true);
-      axios.delete(`${import.meta.env.VITE_API_BASE}/properties/${id}`)
-        .then(fetchData)
-        .catch(() => setErrorMsg('Failed to delete property.'))
-        .finally(() => setLoading(false));
+      setErrorMsg('');
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_BASE}/properties/${id}`);
+        fetchData();
+      } catch (err) {
+        setErrorMsg('Failed to delete property. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
-    <div>
-      <h2>{editId ? 'Edit Property' : 'Add Property'}</h2>
-      {errorMsg && <div style={{ color: 'red', marginBottom: 10 }}>{errorMsg}</div>}
-      <div className="booking-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-        <form id="property-form" className="form-grid" onSubmit={e => { e.preventDefault(); submit(); }}>
-          <label>
-            Name
-            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-          </label>
-          <label>
-            Address
-            <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} required />
-          </label>
-          <label>
-            Type
-            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} required />
-          </label>
-          <label>
-            Owner Name
-            <input value={form.ownerName} onChange={e => setForm({ ...form, ownerName: e.target.value })} required />
-          </label>
-          <label>
-            Contact Phone
-            <input value={form.contactPhone} onChange={e => setForm({ ...form, contactPhone: e.target.value })} required pattern="^[0-9+\-\s]{7,15}$" />
-          </label>
-          <label>
-            Commission %
-            <input type='number' value={form.commissionPercent} onChange={e => setForm({ ...form, commissionPercent: e.target.value })} required min={0} max={100} />
-          </label>
-          <label>
-            Status
-            <select
-              value={form.status}
-              onChange={e => setForm({ ...form, status: e.target.value })}
-              required
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </label>
-        </form>
-        <div
-          style={{
-            display: 'flex',
-            gap: '10px',
-            marginTop: 16,
-            justifyContent: 'flex-end',
-            width: '100%'
-          }}
-        >
-          <button className="booking-btn" type="submit" form="property-form" disabled={loading}>
-            {editId ? 'Update Property' : 'Add Property'}
-          </button>
-          {editId && (
-            <button
-              className="booking-btn booking-btn-cancel"
-              type="button"
-              onClick={resetForm}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </div>
+    <Box sx={{ padding: 3 }}>
+      {errorMsg && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {errorMsg}
+        </Alert>
+      )}
 
-      <div style={{ overflowX: 'auto' }}>
-        <table className="booking-table" border='1' cellPadding='8' style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Owner</th>
-              <th>Phone</th>
-              <th>Commission %</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.map(p => (
-              <tr key={p.id}>
-                <td>{p.name}</td>
-                <td>{p.type}</td>
-                <td>{p.ownerName}</td>
-                <td>{p.contactPhone}</td>
-                <td>{p.commissionPercent}</td>
-                <td>{p.status}</td>
-                <td>
-                  <button className="booking-btn" onClick={() => edit(p)} disabled={loading}>Edit</button>
-                  <button className="booking-btn booking-btn-cancel" onClick={() => remove(p.id)} disabled={loading}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
+        <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+          {editId ? 'Edit Property' : 'Add Property'}
+        </Typography>
+
+        <Box component="form" onSubmit={e => { e.preventDefault(); submit(); }}>
+
+          {/* Form Row Container */}
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3
+          }}>
+
+            {/* First Row */}
+            <Box sx={{
+              display: 'flex',
+              gap: 2,
+              flexWrap: 'wrap',
+              '& > *': {
+                flex: '1 1 300px',
+                minWidth: '250px'
+              }
+            }}>
+              <TextField
+                label="Property Name"
+                required
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Address"
+                required
+                multiline
+                rows={1}
+                value={form.address}
+                onChange={e => setForm({ ...form, address: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Property Type"
+                required
+                placeholder="e.g., Apartment, Villa, House"
+                value={form.type}
+                onChange={e => setForm({ ...form, type: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+            </Box>
+
+            {/* Second Row */}
+            <Box sx={{
+              display: 'flex',
+              gap: 2,
+              flexWrap: 'wrap',
+              '& > *': {
+                flex: '1 1 300px',
+                minWidth: '250px'
+              }
+            }}>
+              <TextField
+                label="Owner Name"
+                required
+                value={form.ownerName}
+                onChange={e => setForm({ ...form, ownerName: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Contact Phone"
+                required
+                inputProps={{
+                  pattern: "^[0-9+\\-\\s]{7,15}$",
+                  title: "Please enter a valid phone number (7-15 digits, can include +, -, spaces)"
+                }}
+                value={form.contactPhone}
+                onChange={e => setForm({ ...form, contactPhone: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Commission Percentage"
+                type="number"
+                required
+                inputProps={{
+                  min: 0,
+                  max: 100,
+                  step: 0.1
+                }}
+                value={form.commissionPercent}
+                onChange={e => setForm({ ...form, commissionPercent: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+            </Box>
+
+            {/* Third Row */}
+            <Box sx={{
+              display: 'flex',
+              gap: 2,
+              flexWrap: 'wrap',
+              alignItems: 'end',
+              justifyContent: 'space-between'
+            }}>
+              <FormControl required sx={{ flex: '0 1 300px', minWidth: '250px' }}>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={form.status}
+                  label="Status"
+                  onChange={e => setForm({ ...form, status: e.target.value })}
+                >
+                  <MenuItem value="active">Active</MenuItem>
+                  <MenuItem value="inactive">Inactive</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flex: '1 1 auto',
+                justifyContent: 'flex-end',
+                minWidth: '250px'
+              }}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={loading}
+                  sx={{
+                    minWidth: 140,
+                    height: 56,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontSize: '1rem'
+                  }}
+                >
+                  {editId ? 'Update Property' : 'Add Property'}
+                </Button>
+                {editId && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={resetForm}
+                    disabled={loading}
+                    sx={{
+                      minWidth: 120,
+                      height: 56,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </Box>
+            </Box>
+
+          </Box>
+        </Box>
+      </Paper>
+
+      <Paper elevation={2}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>Property Name</strong></TableCell>
+              <TableCell><strong>Type</strong></TableCell>
+              <TableCell><strong>Owner</strong></TableCell>
+              <TableCell><strong>Phone</strong></TableCell>
+              <TableCell><strong>Address</strong></TableCell>
+              <TableCell><strong>Commission %</strong></TableCell>
+              <TableCell><strong>Status</strong></TableCell>
+              <TableCell><strong>Actions</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {list.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} sx={{ textAlign: 'center', py: 4 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    No properties found. Add your first property above.
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+              list.map(p => (
+                <TableRow key={p.id} hover>
+                  <TableCell>{p.name}</TableCell>
+                  <TableCell>{p.type}</TableCell>
+                  <TableCell>{p.ownerName}</TableCell>
+                  <TableCell>{p.contactPhone}</TableCell>
+                  <TableCell sx={{ maxWidth: 200 }}>
+                    <Typography variant="body2" noWrap title={p.address}>
+                      {p.address}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{p.commissionPercent}%</TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{
+                        px: 2,
+                        py: 0.5,
+                        borderRadius: 1,
+                        backgroundColor: p.status === 'active' ? 'success.light' : 'error.light',
+                        color: p.status === 'active' ? 'success.dark' : 'error.dark',
+                        display: 'inline-block',
+                        fontSize: '0.75rem',
+                        fontWeight: 'medium',
+                        textTransform: 'capitalize'
+                      }}
+                    >
+                      {p.status}
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => edit(p)}
+                        disabled={loading}
+                        sx={{ minWidth: 60 }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        color="error"
+                        onClick={() => remove(p.id)}
+                        disabled={loading}
+                        sx={{ minWidth: 60 }}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+    </Box>
   );
 };
 

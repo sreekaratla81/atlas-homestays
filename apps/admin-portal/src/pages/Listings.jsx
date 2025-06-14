@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import {
+  Box, Button, CircularProgress, FormControl, InputLabel, MenuItem,
+  Select, TextField, Typography, Table, TableHead, TableRow, TableCell,
+  TableBody, Paper, Grid, Alert
+} from '@mui/material';
 import axios from 'axios';
 
 const Listings = () => {
@@ -91,114 +96,257 @@ const Listings = () => {
   };
 
   return (
-    <div>
-      <h2>{editId ? 'Edit Listing' : 'Add Listing'}</h2>
-      {errorMsg && <div style={{ color: 'red', marginBottom: 10 }}>{errorMsg}</div>}
-      {loading && <div style={{ color: '#1890ff', marginBottom: 10 }}>Loading...</div>}
-      <div className="booking-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-        <form className="form-grid" onSubmit={e => { e.preventDefault(); submit(); }}>
-          <label>
-            Property
-            <select value={form.propertyId} onChange={e => setForm({ ...form, propertyId: e.target.value })} required>
-              <option value=''>Select Property</option>
-              {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
-          </label>
-          <label>
-            Name
-            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-          </label>
-          <label>
-            Floor
-            <input type='number' value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })} required min={0} />
-          </label>
-          <label>
-            Type (1BHK)
-            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} required />
-          </label>
-          <label>
-            Check-in Time (e.g. 14:00)
-            <input value={form.checkInTime || ''} onChange={e => setForm({ ...form, checkInTime: e.target.value })} required pattern="^([01]\d|2[0-3]):([0-5]\d)$" />
-          </label>
-          <label>
-            Check-out Time (e.g. 11:00)
-            <input value={form.checkOutTime || ''} onChange={e => setForm({ ...form, checkOutTime: e.target.value })} required pattern="^([01]\d|2[0-3]):([0-5]\d)$" />
-          </label>
-          <label>
-            Status
-            <select
-              value={form.status}
-              onChange={e => setForm({ ...form, status: e.target.value })}
-              required
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </label>
-          <label>
-            WiFi Name
-            <input value={form.wifiName} onChange={e => setForm({ ...form, wifiName: e.target.value })} />
-          </label>
-          <label>
-            WiFi Password
-            <input value={form.wifiPassword} onChange={e => setForm({ ...form, wifiPassword: e.target.value })} />
-          </label>
-          <label>
-            Max Guests
-            <input type='number' value={form.maxGuests} onChange={e => setForm({ ...form, maxGuests: e.target.value })} required min={1} />
-          </label>
-          {/* Move buttons to a new row below the fields for better alignment */}
-          <div style={{ display: 'flex', gap: '10px', marginTop: 16, justifyContent: 'flex-end', width: '100%' }}>
-            <button className="booking-btn" type="submit" disabled={loading}>
-              {editId ? 'Update' : 'Add Listing'}
-            </button>
-            {editId && (
-              <button className="booking-btn booking-btn-cancel" type="button" onClick={resetForm} disabled={loading}>
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
+    <Box sx={{ padding: 3 }}>
+      {errorMsg && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {errorMsg}
+        </Alert>
+      )}
 
-      <div style={{ overflowX: 'auto' }}>
-        <table className="booking-table" border='1' cellPadding='8' style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>Property</th>
-              <th>Name</th>
-              <th>Floor</th>
-              <th>Type</th>
-              <th>Check-in</th>
-              <th>Check-out</th>
-              <th>Status</th>
-              <th>WiFi Name</th>
-              <th>Guests</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+      {loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
+        <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+          {editId ? 'Edit Listing' : 'Add Listing'}
+        </Typography>
+
+        <Box component="form" onSubmit={e => { e.preventDefault(); submit(); }}>
+          
+          {/* Form Row Container */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: 3 
+          }}>
+            
+            {/* First Row */}
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2, 
+              flexWrap: 'wrap',
+              '& > *': { 
+                flex: '1 1 300px',
+                minWidth: '250px'
+              }
+            }}>
+              <FormControl required sx={{ flex: '1 1 300px' }}>
+                <InputLabel>Property</InputLabel>
+                <Select
+                  value={form.propertyId}
+                  label="Property"
+                  onChange={e => setForm({ ...form, propertyId: e.target.value })}
+                >
+                  <MenuItem value=""><em>Select Property</em></MenuItem>
+                  {properties.map(p => (
+                    <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                label="Name"
+                required
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Floor"
+                type="number"
+                required
+                inputProps={{ min: 0 }}
+                value={form.floor}
+                onChange={e => setForm({ ...form, floor: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+            </Box>
+
+            {/* Second Row */}
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2, 
+              flexWrap: 'wrap',
+              '& > *': { 
+                flex: '1 1 300px',
+                minWidth: '250px'
+              }
+            }}>
+              <TextField
+                label="Type (1BHK)"
+                required
+                value={form.type}
+                onChange={e => setForm({ ...form, type: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Check-in Time (e.g. 14:00)"
+                required
+                inputProps={{ pattern: "^([01]\\d|2[0-3]):([0-5]\\d)$" }}
+                value={form.checkInTime}
+                onChange={e => setForm({ ...form, checkInTime: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="Check-out Time (e.g. 11:00)"
+                required
+                inputProps={{ pattern: "^([01]\\d|2[0-3]):([0-5]\\d)$" }}
+                value={form.checkOutTime}
+                onChange={e => setForm({ ...form, checkOutTime: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+            </Box>
+
+            {/* Third Row */}
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2, 
+              flexWrap: 'wrap',
+              '& > *': { 
+                flex: '1 1 300px',
+                minWidth: '250px'
+              }
+            }}>
+              <FormControl required sx={{ flex: '1 1 300px' }}>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={form.status}
+                  label="Status"
+                  onChange={e => setForm({ ...form, status: e.target.value })}
+                >
+                  <MenuItem value="active">Active</MenuItem>
+                  <MenuItem value="inactive">Inactive</MenuItem>
+                </Select>
+              </FormControl>
+
+              <TextField
+                label="WiFi Name"
+                value={form.wifiName}
+                onChange={e => setForm({ ...form, wifiName: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+
+              <TextField
+                label="WiFi Password"
+                value={form.wifiPassword}
+                onChange={e => setForm({ ...form, wifiPassword: e.target.value })}
+                sx={{ flex: '1 1 300px' }}
+              />
+            </Box>
+
+            {/* Fourth Row */}
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2, 
+              flexWrap: 'wrap',
+              alignItems: 'end',
+              justifyContent: 'space-between'
+            }}>
+              <TextField
+                label="Max Guests"
+                type="number"
+                required
+                inputProps={{ min: 1 }}
+                value={form.maxGuests}
+                onChange={e => setForm({ ...form, maxGuests: e.target.value })}
+                sx={{ flex: '0 1 300px', minWidth: '250px' }}
+              />
+
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 2,
+                flex: '1 1 auto',
+                justifyContent: 'flex-end',
+                minWidth: '250px'
+              }}>
+                <Button 
+                  variant="contained" 
+                  type="submit" 
+                  disabled={loading}
+                  sx={{ 
+                    minWidth: 120,
+                    height: 56,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontSize: '1rem'
+                  }}
+                >
+                  {editId ? 'Update Listing' : 'Add Listing'}
+                </Button>
+                {editId && (
+                  <Button 
+                    variant="outlined" 
+                    color="error" 
+                    onClick={resetForm} 
+                    disabled={loading}
+                    sx={{ 
+                      minWidth: 120,
+                      height: 56,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </Box>
+            </Box>
+
+          </Box>
+        </Box>
+      </Paper>
+
+      <Paper elevation={2}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Property</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Floor</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Check-in</TableCell>
+              <TableCell>Check-out</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>WiFi Name</TableCell>
+              <TableCell>Guests</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {listings.map(l => (
-              <tr key={l.id}>
-                <td>{properties.find(p => p.id === l.propertyId)?.name || '—'}</td>
-                <td>{l.name}</td>
-                <td>{l.floor}</td>
-                <td>{l.type}</td>
-                <td>{l.checkInTime}</td>
-                <td>{l.checkOutTime}</td>
-                <td>{l.status}</td>
-                <td>{l.wifiName}</td>
-                <td>{l.maxGuests}</td>
-                <td>
-                  <button className="booking-btn" onClick={() => edit(l)} disabled={loading}>Edit</button>
-                  <button className="booking-btn booking-btn-cancel" onClick={() => remove(l.id)} disabled={loading}>Delete</button>
-                </td>
-              </tr>
+              <TableRow key={l.id}>
+                <TableCell>{properties.find(p => p.id === l.propertyId)?.name || '—'}</TableCell>
+                <TableCell>{l.name}</TableCell>
+                <TableCell>{l.floor}</TableCell>
+                <TableCell>{l.type}</TableCell>
+                <TableCell>{l.checkInTime}</TableCell>
+                <TableCell>{l.checkOutTime}</TableCell>
+                <TableCell>{l.status}</TableCell>
+                <TableCell>{l.wifiName}</TableCell>
+                <TableCell>{l.maxGuests}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button variant="outlined" size="small" onClick={() => edit(l)} disabled={loading}>
+                      Edit
+                    </Button>
+                    <Button variant="outlined" size="small" color="error" onClick={() => remove(l.id)} disabled={loading}>
+                      Delete
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </Paper>
+    </Box>
   );
 };
 
