@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import {
+  Box, Button, CircularProgress, FormControl, InputLabel, MenuItem,
+  Select, TextField, Typography, Table, TableHead, TableRow, TableCell,
+  TableBody, Paper, Card, CardContent,TablePagination 
+} from '@mui/material';
 import '../style.css';
 
 const Bookings = () => {
@@ -36,7 +41,20 @@ const Bookings = () => {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const messageRef = useRef(null);
+ const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Calculate paginated data
 
   const timeOptions = [
     "08:00", "09:00", "10:00", "11:00", "12:00",
@@ -187,329 +205,464 @@ const Bookings = () => {
     if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
     return 0;
   });
+    const paginatedBookings = sortedBookings.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
-    <div>
-      <h2>{booking.id ? 'Edit Booking' : 'Create Booking'}</h2>
-      <div ref={messageRef}>
-        {successMsg && (
-          <div style={{ color: 'green', marginBottom: '10px' }}>{successMsg}</div>
-        )}
-        {errorMsg && (
-          <div style={{ color: 'red', marginBottom: '10px' }}>{errorMsg}</div>
-        )}
-      </div>
-      <div className="booking-card">
-        <form
-          className="form-grid"
-          onSubmit={e => {
-            e.preventDefault();
-            submit();
-          }}
-          autoComplete="off"
-        >
-          <div className="form-grid">
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Listing
-              <select
-                value={booking.listingId}
-                onChange={e => setBooking({ ...booking, listingId: e.target.value })}
-                required
-              >
-                <option value=''>Select Listing</option>
-                {listings.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Guest
-              <select
-                value={selectedGuestId}
-                onChange={e => setSelectedGuestId(e.target.value)}
-                disabled={Boolean(booking.id)}
-              >
-                <option value=''>New Guest</option>
-                {guests.map(g => (
-                  <option key={g.id} value={g.id}>{g.name} ({g.phone})</option>
-                ))}
-              </select>
-            </label>
-            {!selectedGuestId && (
-              <>
-                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                  Guest Name
-                  <input
-                    placeholder='Guest Name'
-                    value={guest.name}
-                    onChange={e => setGuest({ ...guest, name: e.target.value })}
-                    disabled={!!selectedGuestId || !!booking.id}
-                  />
-                </label>
-                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                  Phone
-                  <input
-                    placeholder='Phone'
-                    value={guest.phone}
-                    onChange={e => setGuest({ ...guest, phone: e.target.value })}
-                    disabled={!!selectedGuestId || !!booking.id}
-                    pattern="^[0-9+\-\s]{7,15}$"
-                    title="Enter a valid phone number"
-                  />
-                </label>
-                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                  Email
-                  <input
-                    placeholder='Email'
-                    value={guest.email}
-                    onChange={e => setGuest({ ...guest, email: e.target.value })}
-                    disabled={!!selectedGuestId || !!booking.id}
-                    type="email"
-                    title="Enter a valid email address"
-                  />
-                </label>
-                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                  ID Proof URL
-                  <input
-                    placeholder='ID Proof URL'
-                    value={guest.idProofUrl}
-                    onChange={e => setGuest({ ...guest, idProofUrl: e.target.value })}
-                    disabled={!!selectedGuestId || !!booking.id}
-                  />
-                </label>
-              </>
+    <Box>
+      <Card sx={{ mx: 'auto', mt: 2, mb: 2 }}>
+        <CardContent>
+          <Typography variant="h4" component="h2" gutterBottom>
+            {booking.id ? 'Edit Booking' : 'Create Booking'}
+          </Typography>
+
+          <Box ref={messageRef} sx={{ mb: 2 }}>
+            {successMsg && (
+              <Alert severity="success" sx={{ mb: 1 }}>
+                {successMsg}
+              </Alert>
             )}
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Check-in Date
-              <input type='date' value={booking.checkinDate} onChange={e => setBooking({ ...booking, checkinDate: e.target.value })} />
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Check-out Date
-              <input type='date' value={booking.checkoutDate} onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })} />
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Planned In Time
-              <select
-                value={booking.plannedCheckinTime}
-                onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
-              >
-                <option value="">Planned In Time</option>
-                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Actual In Time
-              <select
-                value={booking.actualCheckinTime}
-                onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
-              >
-                <option value="">Actual In Time</option>
-                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Planned Out Time
-              <select
-                value={booking.plannedCheckoutTime}
-                onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
-              >
-                <option value="">Planned Out Time</option>
-                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Actual Out Time
-              <select
-                value={booking.actualCheckoutTime}
-                onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
-              >
-                <option value="">Actual Out Time</option>
-                {timeOptions.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Booking Source
-              <select
-                value={booking.bookingSource}
-                onChange={e => setBooking({ ...booking, bookingSource: e.target.value })}
-                required
-              >
-                <option value="Walk-in">Walk-in</option>
-                <option value="airbnb">Airbnb</option>
-                <option value="agoda">Agoda</option>
-                <option value="booking.com">Booking.com</option>
-                <option value="Atlas Website">Atlas Website</option>
-                <option value="Agent">Agent</option>
-                <option value="Others">Others</option>
-                {/* Add more options as needed */}
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Payment Status
-              <select
-                value={booking.paymentStatus}
-                onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })}
-                required
-              >
-                <option value="unpaid">Unpaid</option>
-                <option value="paid">Paid</option>
-                <option value="partial">Partial</option>
-              </select>
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Amount Received
-              <input
+            {errorMsg && (
+              <Alert severity="error" sx={{ mb: 1 }}>
+                {errorMsg}
+              </Alert>
+            )}
+          </Box>
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              submit();
+            }}
+            autoComplete="off"
+          >
+            <Box sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 2,
+              '& > *': {
+                flex: '1 1 calc(33.333% - 16px)',
+                minWidth: '280px'
+              }
+            }}>
+
+              {/* Listing */}
+              <FormControl required>
+                <InputLabel>Listing</InputLabel>
+                <Select
+                  value={booking.listingId}
+                  onChange={e => setBooking({ ...booking, listingId: e.target.value })}
+                  label="Listing"
+                >
+                  <MenuItem value="">Select Listing</MenuItem>
+                  {listings.map(l => (
+                    <MenuItem key={l.id} value={l.id}>{l.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Guest */}
+              <FormControl>
+                <InputLabel>Guest</InputLabel>
+                <Select
+                  value={selectedGuestId}
+                  onChange={e => setSelectedGuestId(e.target.value)}
+                  disabled={Boolean(booking.id)}
+                  label="Guest"
+                >
+                  <MenuItem value="">New Guest</MenuItem>
+                  {guests.map(g => (
+                    <MenuItem key={g.id} value={g.id}>
+                      {g.name} ({g.phone})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Check-in Date */}
+              <TextField
+                label="Check-in Date"
+                type="date"
+                value={booking.checkinDate}
+                onChange={e => setBooking({ ...booking, checkinDate: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+              />
+
+              {/* Guest Name - only show if no guest selected */}
+              {!selectedGuestId && (
+                <TextField
+                  label="Guest Name"
+                  placeholder="Guest Name"
+                  value={guest.name}
+                  onChange={e => setGuest({ ...guest, name: e.target.value })}
+                  disabled={!!selectedGuestId || !!booking.id}
+                />
+              )}
+
+              {/* Phone - only show if no guest selected */}
+              {!selectedGuestId && (
+                <TextField
+                  label="Phone"
+                  placeholder="Phone"
+                  value={guest.phone}
+                  onChange={e => setGuest({ ...guest, phone: e.target.value })}
+                  disabled={!!selectedGuestId || !!booking.id}
+                  inputProps={{
+                    pattern: "^[0-9+\\-\\s]{7,15}$",
+                    title: "Enter a valid phone number"
+                  }}
+                />
+              )}
+
+              {/* Check-out Date */}
+              <TextField
+                label="Check-out Date"
+                type="date"
+                value={booking.checkoutDate}
+                onChange={e => setBooking({ ...booking, checkoutDate: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+              />
+
+              {/* Email - only show if no guest selected */}
+              {!selectedGuestId && (
+                <TextField
+                  label="Email"
+                  placeholder="Email"
+                  type="email"
+                  value={guest.email}
+                  onChange={e => setGuest({ ...guest, email: e.target.value })}
+                  disabled={!!selectedGuestId || !!booking.id}
+                  inputProps={{
+                    title: "Enter a valid email address"
+                  }}
+                />
+              )}
+
+              {/* ID Proof URL - only show if no guest selected */}
+              {!selectedGuestId && (
+                <TextField
+                  label="ID Proof URL"
+                  placeholder="ID Proof URL"
+                  value={guest.idProofUrl}
+                  onChange={e => setGuest({ ...guest, idProofUrl: e.target.value })}
+                  disabled={!!selectedGuestId || !!booking.id}
+                />
+              )}
+
+              {/* Planned In Time */}
+              <FormControl>
+                <InputLabel>Planned In Time</InputLabel>
+                <Select
+                  value={booking.plannedCheckinTime}
+                  onChange={e => setBooking({ ...booking, plannedCheckinTime: e.target.value })}
+                  label="Planned In Time"
+                >
+                  <MenuItem value="">Planned In Time</MenuItem>
+                  {timeOptions.map(t => (
+                    <MenuItem key={t} value={t}>{t}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Actual In Time */}
+              <FormControl>
+                <InputLabel>Actual In Time</InputLabel>
+                <Select
+                  value={booking.actualCheckinTime}
+                  onChange={e => setBooking({ ...booking, actualCheckinTime: e.target.value })}
+                  label="Actual In Time"
+                >
+                  <MenuItem value="">Actual In Time</MenuItem>
+                  {timeOptions.map(t => (
+                    <MenuItem key={t} value={t}>{t}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Planned Out Time */}
+              <FormControl>
+                <InputLabel>Planned Out Time</InputLabel>
+                <Select
+                  value={booking.plannedCheckoutTime}
+                  onChange={e => setBooking({ ...booking, plannedCheckoutTime: e.target.value })}
+                  label="Planned Out Time"
+                >
+                  <MenuItem value="">Planned Out Time</MenuItem>
+                  {timeOptions.map(t => (
+                    <MenuItem key={t} value={t}>{t}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Actual Out Time */}
+              <FormControl>
+                <InputLabel>Actual Out Time</InputLabel>
+                <Select
+                  value={booking.actualCheckoutTime}
+                  onChange={e => setBooking({ ...booking, actualCheckoutTime: e.target.value })}
+                  label="Actual Out Time"
+                >
+                  <MenuItem value="">Actual Out Time</MenuItem>
+                  {timeOptions.map(t => (
+                    <MenuItem key={t} value={t}>{t}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Booking Source */}
+              <FormControl required>
+                <InputLabel>Booking Source</InputLabel>
+                <Select
+                  value={booking.bookingSource}
+                  onChange={e => setBooking({ ...booking, bookingSource: e.target.value })}
+                  label="Booking Source"
+                >
+                  <MenuItem value="Walk-in">Walk-in</MenuItem>
+                  <MenuItem value="airbnb">Airbnb</MenuItem>
+                  <MenuItem value="agoda">Agoda</MenuItem>
+                  <MenuItem value="booking.com">Booking.com</MenuItem>
+                  <MenuItem value="Atlas Website">Atlas Website</MenuItem>
+                  <MenuItem value="Agent">Agent</MenuItem>
+                  <MenuItem value="Others">Others</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Payment Status */}
+              <FormControl required>
+                <InputLabel>Payment Status</InputLabel>
+                <Select
+                  value={booking.paymentStatus}
+                  onChange={e => setBooking({ ...booking, paymentStatus: e.target.value })}
+                  label="Payment Status"
+                >
+                  <MenuItem value="unpaid">Unpaid</MenuItem>
+                  <MenuItem value="paid">Paid</MenuItem>
+                  <MenuItem value="partial">Partial</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Amount Received */}
+              <TextField
+                label="Amount Received"
                 type="number"
                 placeholder="Amount Received"
                 value={booking.amountReceived}
                 onChange={e => setBooking({ ...booking, amountReceived: e.target.value })}
-                min={0}
-                step="0.01"
+                inputProps={{
+                  min: 0,
+                  step: "0.01"
+                }}
               />
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              Notes
-              <input placeholder='Notes' value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} />
-            </label>
-            {/* Created At and Payment Date labels already present */}
-            {!booking.id && (
-              <>
-                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                  Created At
-                  <input
-                    type="date"
-                    value={booking.createdAt}
-                    onChange={e => setBooking({ ...booking, createdAt: e.target.value })}
-                  />
-                </label>
-                <label style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                  Payment Date
-                  <input
-                    type="date"
-                    value={booking.paymentDate}
-                    onChange={e => setBooking({ ...booking, paymentDate: e.target.value })}
-                  />
-                </label>
-              </>
-            )}
-          </div>
-          <div style={{ display: 'flex', gap: '10px', marginTop: 16, justifyContent: 'flex-end', width: '100%' }}>
-            <button className="booking-btn" type="submit" disabled={loading}>
-              {loading ? 'Saving...' : booking.id ? 'Update Booking' : 'Create Booking'}
-            </button>
-            {booking.id && (
-              <button
-                className="booking-btn booking-btn-cancel"
-                type="button"
-                onClick={reset}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
-        <input
-          placeholder="Filter by Listing"
+              {/* Notes */}
+              <TextField
+                label="Notes"
+                placeholder="Notes"
+                value={booking.notes}
+                onChange={e => setBooking({ ...booking, notes: e.target.value })}
+                multiline
+                rows={2}
+                sx={{ gridColumn: 'span 2' }}
+              />
+
+              {/* Created At - only show if not editing */}
+              {!booking.id && (
+                <TextField
+                  label="Created At"
+                  type="date"
+                  value={booking.createdAt}
+                  onChange={e => setBooking({ ...booking, createdAt: e.target.value })}
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+
+              {/* Payment Date - only show if not editing */}
+              {!booking.id && (
+                <TextField
+                  label="Payment Date"
+                  type="date"
+                  value={booking.paymentDate}
+                  onChange={e => setBooking({ ...booking, paymentDate: e.target.value })}
+                  InputLabelProps={{ shrink: true }}
+                />
+              )}
+            </Box>
+
+            {/* Action Buttons */}
+            <Box sx={{
+              display: 'flex',
+              gap: 2,
+              mt: 3,
+              justifyContent: 'flex-end'
+            }}>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                sx={{ minWidth: 120 }}
+              >
+                {loading ? 'Saving...' : booking.id ? 'Update Booking' : 'Create Booking'}
+              </Button>
+
+              {booking.id && (
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={reset}
+                  disabled={loading}
+                  sx={{ minWidth: 120 }}
+                >
+                  Cancel
+                </Button>
+              )}
+            </Box>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 2,
+          mb: 3,
+          alignItems: 'center',
+        }}
+      >
+        <TextField
+          label="Filter by Listing"
+          variant="outlined"
+          size="small"
           value={filters.listing}
           onChange={e => setFilters(f => ({ ...f, listing: e.target.value }))}
-          style={{ marginRight: 8 }}
         />
-        <input
-          placeholder="Filter by Guest"
+
+        <TextField
+          label="Filter by Guest"
+          variant="outlined"
+          size="small"
           value={filters.guest}
           onChange={e => setFilters(f => ({ ...f, guest: e.target.value }))}
-          style={{ marginRight: 8 }}
         />
-        <select
-          value={filters.paymentStatus}
-          onChange={e => setFilters(f => ({ ...f, paymentStatus: e.target.value }))}
-          style={{ marginRight: 8 }}
-        >
-          <option value="">All Payment Status</option>
-          <option value="paid">Paid</option>
-          <option value="unpaid">Unpaid</option>
-          <option value="partial">Partial</option>
-        </select>
-        <button onClick={() => {
+
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <InputLabel>Payment Status</InputLabel>
+          <Select
+            value={filters.paymentStatus}
+            label="Payment Status"
+            onChange={e => setFilters(f => ({ ...f, paymentStatus: e.target.value }))}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="paid">Paid</MenuItem>
+            <MenuItem value="unpaid">Unpaid</MenuItem>
+            <MenuItem value="partial">Partial</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Button variant="outlined" size="small" onClick={() => {
           setSortField('checkinDate');
           setSortOrder(o => o === 'asc' ? 'desc' : 'asc');
         }}>
           Sort by Check-in {sortField === 'checkinDate' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
-        </button>
-        <button onClick={() => {
+        </Button>
+
+        <Button variant="outlined" size="small" onClick={() => {
           setSortField('amountReceived');
           setSortOrder(o => o === 'asc' ? 'desc' : 'asc');
         }}>
           Sort by Amount {sortField === 'amountReceived' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
-        </button>
-        <button onClick={() => {
+        </Button>
+
+        <Button variant="outlined" size="small" onClick={() => {
           setSortField('createdAt');
           setSortOrder(o => o === 'asc' ? 'desc' : 'asc');
         }}>
           Sort by Created {sortField === 'createdAt' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
-        </button>
-        <button onClick={() => {
+        </Button>
+
+        <Button variant="outlined" size="small" onClick={() => {
           setSortField('paymentDate');
           setSortOrder(o => o === 'asc' ? 'desc' : 'asc');
         }}>
           Sort by Payment Date {sortField === 'paymentDate' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
-        </button>
-      </div>
+        </Button>
+      </Box>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table className="booking-table">
-          <thead>
-            <tr>
-              <th>Listing</th>
-              <th>Guest</th>
-              <th>Check-in</th>
-              <th>Check-out</th>
-              <th>Payment</th>
-              <th>Amount</th>
-              <th>Source</th>
-              <th>Created At</th>
-              <th>Payment Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedBookings.map(b => {
+      {/* Table to display bookings */}
+      <Paper elevation={2}>
+        <Table className="booking-table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Listing</TableCell>
+              <TableCell>Guest</TableCell>
+              <TableCell>Check-in</TableCell>
+              <TableCell>Check-out</TableCell>
+              <TableCell>Payment</TableCell>
+              <TableCell>Amount</TableCell>
+              <TableCell>Source</TableCell>
+              <TableCell>Created At</TableCell>
+              <TableCell>Payment Date</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedBookings.map(b => {
               const guestObj = guests.find(g => g.id === b.guestId) || {};
               const listingObj = listings.find(l => l.id === b.listingId) || {};
               return (
-                <tr key={b.id}>
-                  <td>{listingObj.name || b.listingId}</td>
-                  <td>
+                <TableRow key={b.id}>
+                  <TableCell>{listingObj.name || b.listingId}</TableCell>
+                  <TableCell>
                     {guestObj.name || ''}<br />
                     {guestObj.phone || ''}<br />
                     {guestObj.email || ''}
-                  </td>
-                  <td>{b.checkinDate}</td>
-                  <td>{b.checkoutDate}</td>
-                  <td>{b.paymentStatus}</td>
-                  <td>{b.amountReceived}</td>
-                  <td>{b.bookingSource}</td>
-                  <td>{b.createdAt ? new Date(b.createdAt).toLocaleDateString() : ''}</td>
-                  <td>{b.paymentDate ? new Date(b.paymentDate).toLocaleDateString() : ''}</td>
-                  <td>
-                    <button
-                      className="booking-btn"
-                      onClick={() => handleEdit(b)}
-                      disabled={loading}
-                      type="button"
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell>{b.checkinDate}</TableCell>
+                  <TableCell>{b.checkoutDate}</TableCell>
+                  <TableCell>{b.paymentStatus}</TableCell>
+                  <TableCell>{b.amountReceived}</TableCell>
+                  <TableCell>{b.bookingSource}</TableCell>
+                  <TableCell>{b.createdAt ? new Date(b.createdAt).toLocaleDateString() : ''}</TableCell>
+                  <TableCell>{b.paymentDate ? new Date(b.paymentDate).toLocaleDateString() : ''}</TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleEdit(b)}
+                        disabled={loading}
+                        sx={{ minWidth: 60 }}
+                      >
+                        Edit
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          component="div"
+          count={sortedBookings.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            borderTop: '1px solid rgba(224, 224, 224, 1)',
+            '.MuiTablePagination-toolbar': {
+              paddingLeft: 2,
+              paddingRight: 2,
+            },
+          }}
+        />
+      </Paper>
+
+    </Box>
   );
 };
 
