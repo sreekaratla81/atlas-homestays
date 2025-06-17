@@ -1,8 +1,8 @@
 // guest-web/src/App.jsx
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import BookNow from './pages/BookNow';
-import GuestBooking from './pages/GuestBooking'; // 👈 Add this
+import Home from './pages1/Home';
+import BookNow from './pages1/BookNow';
+import GuestBooking from './pages1/GuestBooking'; // 👈 Add this
 
 function App() {
     return (
