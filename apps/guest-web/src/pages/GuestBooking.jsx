@@ -1,7 +1,6 @@
 // src/pages/GuestBooking.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './guest.css';
 
 const GuestBooking = () => {
     const [listings, setListings] = useState([]);
