@@ -59,3 +59,19 @@ This monorepo contains all the technology components for **Atlas Homestays** —
   - `atlas-homes-api...azurewebsites.net` → Azure API endpoint
 
 ---
+
+## 🚀 Quick Start
+
+### Frontend
+```bash
+cd apps/admin-portal
+npm install
+npm run dev
+```
+
+### Backend
+```bash
+cd backend/api
+dotnet run --project Atlas.Api
+```
+
