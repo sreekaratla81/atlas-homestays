@@ -1,6 +1,7 @@
 // src/pages/GuestBooking.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE } from '../config';
 
 const GuestBooking = () => {
     const [listings, setListings] = useState([]);
@@ -9,7 +10,7 @@ const GuestBooking = () => {
     const [calendarDays, setCalendarDays] = useState([]);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_BASE}/listings`).then(res => setListings(res.data));
+        axios.get(`${API_BASE}/listings`).then(res => setListings(res.data));
         const today = new Date();
         const days = Array.from({ length: 14 }, (_, i) => {
             const date = new Date(today);
@@ -45,11 +46,11 @@ const GuestBooking = () => {
     };
 
     const submit = async () => {
-        const guestRes = await axios.post(`${import.meta.env.VITE_API_BASE}/guests`, guest);
+        const guestRes = await axios.post(`${API_BASE}/guests`, guest);
         const guestId = guestRes.data.id;
         const bookings = groupByListing().map(b => ({ ...b, guestId }));
         for (let b of bookings) {
-            await axios.post(`${import.meta.env.VITE_API_BASE}/bookings`, b);
+            await axios.post(`${API_BASE}/bookings`, b);
         }
         alert("Booking submitted successfully");
         setSelected([]);
