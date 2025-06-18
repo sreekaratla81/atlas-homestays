@@ -1,17 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+
 const heroStyle = {
   background: 'url("/hero.jpg") center center/cover no-repeat',
-  minHeight: '70vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  color: '#fff',
-  textShadow: '0 2px 8px rgba(0,0,0,0.7)',
-  position: 'relative',
-  padding: '48px 16px'
+  color: '#fff'
 };
 
 const listings = [
@@ -66,7 +58,7 @@ const Home = () => {
 
   return (
     <>
-      <section className="text-center py-5 bg-light">
+      <section className="text-center py-5" style={heroStyle}>
         <h1 className="display-4 mb-3">Welcome to Atlas Homestays</h1>
         <p className="lead mb-4">Premium Service Apartments in KPHB.</p>
         <Link to="/listings" className="btn btn-primary btn-lg">
