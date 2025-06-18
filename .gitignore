@@ -1,5 +1,6 @@
 # .gitignore
 node_modules/
+dist/
 .env
 *.log
 *.bak
@@ -12,8 +13,3 @@ obj/
 *.vsidx
 *.suo
 *.user
-*.log
-bin/
-obj/
-node_modules/
-dist/
