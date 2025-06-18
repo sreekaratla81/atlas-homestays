@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const listings = [
   {
@@ -40,11 +40,16 @@ const listings = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
   const [checkIn, setCheckIn] = React.useState('');
   const [checkOut, setCheckOut] = React.useState('');
   const [adults, setAdults] = React.useState(1);
   const [children, setChildren] = React.useState(0);
   const today = new Date().toISOString().split('T')[0];
+
+  const handleCheck = () => {
+    navigate('/guest-booking');
+  };
 
   return (
     <>
@@ -88,7 +93,18 @@ const Home = () => {
             {[0, 1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n} Child{n !== 1 ? 'ren' : ''}</option>)}
           </select>
         </div>
-        <button style={{ background: 'none', color: '#fff', border: 'none', fontWeight: 600, fontSize: '1rem', padding: '0 1.5rem', cursor: 'pointer' }}>
+        <button
+          onClick={handleCheck}
+          style={{
+            background: 'none',
+            color: '#fff',
+            border: 'none',
+            fontWeight: 600,
+            fontSize: '1rem',
+            padding: '0 1.5rem',
+            cursor: 'pointer'
+          }}
+        >
           Check Availability
         </button>
       </div>
