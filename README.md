@@ -59,3 +59,9 @@ This monorepo contains all the technology components for **Atlas Homestays** —
   - `atlas-homes-api.azurewebsites.net` → Azure API endpoint
 
 ---
+
+## Environment Variables
+
+Create a `.env` file (you can copy from `.env.example`) with the following variables:
+
+- `DEFAULT_CONNECTION` – SQL Server connection string for the API
