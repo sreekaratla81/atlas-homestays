@@ -12,8 +12,4 @@ obj/
 *.vsidx
 *.suo
 *.user
-*.log
-bin/
-obj/
-node_modules/
 dist/
