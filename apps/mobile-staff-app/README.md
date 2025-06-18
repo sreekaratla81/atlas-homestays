@@ -1,6 +1,6 @@
 # Atlas Homestays Staff Mobile App
 
-This directory contains the mobile application for on-site staff such as cleaners and maintenance crews. The app is built with **React Native** using the Expo framework.
+This directory contains the mobile application used by on‑site staff such as cleaners and maintenance crews. It is built with **React Native** using the Expo framework.
 
 ## Purpose
 
@@ -11,7 +11,7 @@ This directory contains the mobile application for on-site staff such as cleaner
 ## Getting Started
 
 1. Install [Node.js](https://nodejs.org/) (v18 or higher).
-2. Install the Expo CLI globally:
+2. Install the Expo CLI globally or use it via `npx`:
 
    ```bash
    npm install -g expo-cli
@@ -31,4 +31,5 @@ This directory contains the mobile application for on-site staff such as cleaner
 
    Use the Expo Go app or an emulator to preview the project.
 
-Environment variables such as the API endpoint can be configured in a `.env` file.
+Create a `.env` file to configure values such as `API_URL` for the backend.
+
