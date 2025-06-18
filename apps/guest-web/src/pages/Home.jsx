@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const listings = [
   {
@@ -47,6 +48,13 @@ const Home = () => {
 
   return (
     <>
+      <section className="text-center py-5 bg-light">
+        <h1 className="display-4 mb-3">Welcome to Atlas Homestays</h1>
+        <p className="lead mb-4">Premium Service Apartments in KPHB.</p>
+        <Link to="/listings" className="btn btn-primary btn-lg">
+          Browse Listings
+        </Link>
+      </section>
       {/* Booking Bar */}
       <div style={{
         display: 'flex',
@@ -101,9 +109,6 @@ const Home = () => {
         ))}
       </section>
 
-      <footer style={{ textAlign: 'center', padding: '1.5rem', fontSize: '0.9rem', background: '#1e3a8a', color: 'white' }}>
-        <p>&copy; 2025 Atlas Homestays | All rights reserved</p>
-      </footer>
     </>
   );
 };
