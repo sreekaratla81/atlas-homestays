@@ -63,5 +63,3 @@ This monorepo contains all the technology components for **Atlas Homestays** —
   - `apps/guest-web/.env.example` – sets `VITE_API_BASE` for the guest site.
   - `apps/admin-portal/.env.example` – sets `VITE_API_BASE` plus Auth0 `VITE_AUTH0_DOMAIN` and `VITE_AUTH0_CLIENT_ID`.
   - `backend/api/Atlas.Api/.env.example` – sets `ConnectionStrings__DefaultConnection` for the API.
-
----

@@ -1,19 +1,22 @@
 # .gitignore
-node_modules/
+# General
 .env
 *.log
 *.bak
+*.md~
 .DS_Store
-.vscode/
+
+# Node.js
+node_modules/
+dist/
+
+# Build output
 bin/
 obj/
-*.md~
+
+# IDE settings
+.vscode/
 .vs/
 *.vsidx
 *.suo
 *.user
-*.log
-bin/
-obj/
-node_modules/
-dist/
