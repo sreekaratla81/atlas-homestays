@@ -1,5 +1,18 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+const heroStyle = {
+  background: 'url("/hero.jpg") center center/cover no-repeat',
+  minHeight: '70vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  color: '#fff',
+  textShadow: '0 2px 8px rgba(0,0,0,0.7)',
+  position: 'relative',
+  padding: '48px 16px'
+};
 
 const listings = [
   {
