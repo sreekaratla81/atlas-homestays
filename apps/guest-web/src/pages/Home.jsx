@@ -1,14 +1,60 @@
-// File: src/pages/Home.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
+const Home = () => (
+    <div className="text-center">
+        <h1 className="display-4">Welcome to Atlas Homestays</h1>
+        <p className="lead">Premium Service Apartments in KPHB.</p>
+        <Link to="/listings" className="btn btn-primary btn-lg">Browse Listings</Link>
+    </div>
 
+const heroStyle = {
+  background: 'url("/hero.jpg") center center/cover no-repeat',
+  minHeight: '70vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  color: '#fff',
+  textShadow: '0 2px 8px rgba(0,0,0,0.7)',
+  position: 'relative',
+  padding: '48px 16px'
+};
+
+const overlayStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  background: 'rgba(0,0,0,0.45)',
+  zIndex: 1
+};
+
+const contentStyle = {
+  position: 'relative',
+  zIndex: 2,
+  textAlign: 'center'
+};
+
+// Basic hero section without external image dependency
 const Home = () => (
     <section>
-        <h2>Welcome to Atlas Homestays</h2>
+        <img src="/hero.webp" alt="Atlas Homestays" style={{ width: '100%' }} />
         <p>Premium Service Apartments in KPHB.</p>
         <div style={{ color: 'red', fontWeight: 'bold', marginTop: 16 }}>
             This is a dev branch
         </div>
     </section>
+  <section style={heroStyle}>
+    <div style={overlayStyle}></div>
+    <div style={contentStyle}>
+      <h1 className="display-4 mb-3">Welcome to Atlas Homestays</h1>
+      <p className="lead mb-4">Premium Service Apartments in KPHB.</p>
+      <Link to="/listings" className="btn btn-primary btn-lg">
+        Browse Listings
+      </Link>
+    </div>
+  </section>
 );
 
 export default Home;
