@@ -29,10 +29,22 @@ namespace Atlas.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            var envConn = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
-            var connectionString = string.IsNullOrWhiteSpace(envConn)
-                ? builder.Configuration.GetConnectionString("DefaultConnection")
-                : envConn;
+            // Connection string can come from appsettings.json, appsettings.{Environment}.json
+            // or environment variables. Azure App Service typically injects the
+            // connection string as `ConnectionStrings__DefaultConnection` so we
+            // read from configuration first which already checks that variable.
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            // Fall back to older environment variable name if provided
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
+            }
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("Database connection string is not configured.");
+            }
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
