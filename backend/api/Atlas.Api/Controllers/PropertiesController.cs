@@ -11,16 +11,29 @@ namespace Atlas.Api.Controllers
     public class PropertiesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<PropertiesController> _logger;
 
-        public PropertiesController(AppDbContext context)
+        public PropertiesController(AppDbContext context, ILogger<PropertiesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Property>>> GetAll()
         {
-            return await _context.Properties.ToListAsync();
+            _logger.LogInformation("Fetching all properties");
+            try
+            {
+                var properties = await _context.Properties.ToListAsync();
+                _logger.LogInformation("Retrieved {Count} properties", properties.Count);
+                return properties;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving properties");
+                return StatusCode(500, "Error retrieving properties");
+            }
         }
 
         [HttpGet("{id}")]
