@@ -1,10 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Header = () => (
     <nav>
-        <a href="/">Home</a>
-        <a href="/book">Book Now</a>
-        <a href="/guest-booking">Multi-Listing Booking</a>
+        <Link to="/">Home</Link>
+        <Link to="/book">Book Now</Link>
+        <Link to="/guest-booking">Multi-Listing Booking</Link>
     </nav>
 );
 
