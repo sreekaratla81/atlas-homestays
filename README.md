@@ -59,3 +59,10 @@ This monorepo contains all the technology components for **Atlas Homestays** —
   - `atlas-homes-api...azurewebsites.net` → Azure API endpoint
 
 ---
+
+### 🧪 Running Tests
+
+```bash
+cd backend/api
+dotnet test
+```
