@@ -3,7 +3,7 @@ import React from 'react';
 
 const Home = () => (
     <section>
-        <h2>Welcome to Atlas Homestays</h2>
+        <img src="/hero.webp" alt="Atlas Homestays" style={{ width: '100%' }} />
         <p>Premium Service Apartments in KPHB.</p>
         <div style={{ color: 'red', fontWeight: 'bold', marginTop: 16 }}>
             This is a dev branch
