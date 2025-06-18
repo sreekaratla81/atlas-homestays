@@ -57,5 +57,3 @@ This monorepo contains all the technology components for **Atlas Homestays** —
 - **Custom Domains:**
   - `admin.atlashomestays.com` → Cloudflare Pages (React app)
   - `atlas-homes-api.azurewebsites.net` → Azure API endpoint
-
----
