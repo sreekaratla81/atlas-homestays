@@ -56,13 +56,4 @@ This monorepo contains all the technology components for **Atlas Homestays** —
 - **DNS & Proxy:** Cloudflare
 - **Custom Domains:**
   - `admin.atlashomestays.com` → Cloudflare Pages (React app)
-  - `atlas-homes-api...azurewebsites.net` → Azure API endpoint
-
----
-
-### 🧪 Running Tests
-
-```bash
-cd backend/api
-dotnet test
-```
+  - `atlas-homes-api.azurewebsites.net` → Azure API endpoint
