@@ -1,6 +1,8 @@
 // File: src/pages/Home.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
+// Basic hero section without external image dependency
 const Home = () => (
     <section>
         <img src="/hero.webp" alt="Atlas Homestays" style={{ width: '100%' }} />
