@@ -36,7 +36,15 @@ const contentStyle = {
   textAlign: 'center'
 };
 
+// Basic hero section without external image dependency
 const Home = () => (
+    <section>
+        <img src="/hero.webp" alt="Atlas Homestays" style={{ width: '100%' }} />
+        <p>Premium Service Apartments in KPHB.</p>
+        <div style={{ color: 'red', fontWeight: 'bold', marginTop: 16 }}>
+            This is a dev branch
+        </div>
+    </section>
   <section style={heroStyle}>
     <div style={overlayStyle}></div>
     <div style={contentStyle}>

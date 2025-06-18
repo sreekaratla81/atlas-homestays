@@ -58,6 +58,43 @@ This monorepo contains all the technology components for **Atlas Homestays** —
   - `admin.atlashomestays.com` → Cloudflare Pages (React app)
   - `atlas-homes-api.azurewebsites.net` → Azure API endpoint
 
+## Local Development
+
+The API requires a connection string named `DefaultConnection`. This value is no
+longer stored in `appsettings.json`. Configure it through environment variables
+or the .NET user-secrets feature:
+
+```bash
+# Example temporary shell variable
+export ConnectionStrings__DefaultConnection="Server=...;Database=...;User
+ID=...;Password=..."
+
+# Or store it with user secrets
+cd backend/api/Atlas.Api
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=...;Datab
+ase=...;User ID=...;Password=..."
+```
+
+Other sensitive values should be provided the same way instead of being
+committed to source control.
+
+---
+
+## 🚀 Quick Start
+
+### Frontend
+```bash
+cd apps/admin-portal
+npm install
+npm run dev
+```
+
+### Backend
+```bash
+cd backend/api
+dotnet run --project Atlas.Api
+```
+
 ### ⚙️ Environment Configuration
 - Copy the provided `.env.example` in each project and rename to `.env`:
   - `apps/guest-web/.env.example` – sets `VITE_API_BASE` for the guest site.
