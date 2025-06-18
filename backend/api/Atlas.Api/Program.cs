@@ -42,7 +42,10 @@ namespace Atlas.Api
                 c.RoutePrefix = "swagger"; // ensures URL ends with /swagger
             });
 
-            app.UseDeveloperExceptionPage(); // Add this line for dev environment
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage(); // Use detailed error page only in development
+            }
             app.UseHttpsRedirection();
             app.UseCors();
             app.UseAuthorization();
