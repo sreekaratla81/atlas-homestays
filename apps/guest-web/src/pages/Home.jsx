@@ -1,14 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-const Home = () => (
-    <div className="text-center">
-        <h1 className="display-4">Welcome to Atlas Homestays</h1>
-        <p className="lead">Premium Service Apartments in KPHB.</p>
-        <Link to="/listings" className="btn btn-primary btn-lg">Browse Listings</Link>
-    </div>
 
 const heroStyle = {
-  background: 'url("/hero.jpg") center center/cover no-repeat',
+  background: 'url("/hero.webp") center center/cover no-repeat',
   minHeight: '70vh',
   display: 'flex',
   alignItems: 'center',
@@ -36,15 +30,7 @@ const contentStyle = {
   textAlign: 'center'
 };
 
-// Basic hero section without external image dependency
 const Home = () => (
-    <section>
-        <img src="/hero.webp" alt="Atlas Homestays" style={{ width: '100%' }} />
-        <p>Premium Service Apartments in KPHB.</p>
-        <div style={{ color: 'red', fontWeight: 'bold', marginTop: 16 }}>
-            This is a dev branch
-        </div>
-    </section>
   <section style={heroStyle}>
     <div style={overlayStyle}></div>
     <div style={contentStyle}>
