@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const heroStyle = {
   background: 'url("/hero.jpg") center center/cover no-repeat',
-  color: '#fff'
+  color: '#fff',
+  minHeight: '60vh'
 };
 
 const listings = [
